@@ -19,3 +19,32 @@ only showing top 5 rows
 #  |-- song_id: string (nullable = true)
 #  |-- title: string (nullable = true)
 #  |-- year: long (nullable = true)
+
++-----------+---------+---------+------+-------------+--------+---------+-----+-------------------------------------+------+--------+-----------------+---------+---------------+------+-------------+-----------------------------------------------------------------------------------------------------------------------------------------+------+
+|artist     |auth     |firstName|gender|itemInSession|lastName|length   |level|location                             |method|page    |registration     |sessionId|song           |status|ts           |userAgent                                                                                                                                |userId|
++-----------+---------+---------+------+-------------+--------+---------+-----+-------------------------------------+------+--------+-----------------+---------+---------------+------+-------------+-----------------------------------------------------------------------------------------------------------------------------------------+------+
+|Harmonia   |Logged In|Ryan     |M     |0            |Smith   |655.77751|free |San Jose-Sunnyvale-Santa Clara, CA   |PUT   |NextSong|1.541016707796E12|583      |Sehr kosmisch  |200   |1542241826796|"Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Ubuntu Chromium/36.0.1985.125 Chrome/36.0.1985.125 Safari/537.36"|26    |
+|The Prodigy|Logged In|Ryan     |M     |1            |Smith   |260.07465|free |San Jose-Sunnyvale-Santa Clara, CA   |PUT   |NextSong|1.541016707796E12|583      |The Big Gundown|200   |1542242481796|"Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Ubuntu Chromium/36.0.1985.125 Chrome/36.0.1985.125 Safari/537.36"|26    |
+|Train      |Logged In|Ryan     |M     |2            |Smith   |205.45261|free |San Jose-Sunnyvale-Santa Clara, CA   |PUT   |NextSong|1.541016707796E12|583      |Marry Me       |200   |1542242741796|"Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Ubuntu Chromium/36.0.1985.125 Chrome/36.0.1985.125 Safari/537.36"|26    |
+|null       |Logged In|Wyatt    |M     |0            |Scott   |null     |free |Eureka-Arcata-Fortuna, CA            |GET   |Home    |1.540872073796E12|563      |null           |200   |1542247071796|Mozilla/5.0 (Windows NT 6.1; WOW64; Trident/7.0; rv:11.0) like Gecko                                                                     |9     |
+|null       |Logged In|Austin   |M     |0            |Rosales |null     |free |New York-Newark-Jersey City, NY-NJ-PA|GET   |Home    |1.541059521796E12|521      |null           |200   |1542252577796|Mozilla/5.0 (Windows NT 6.1; rv:31.0) Gecko/20100101 Firefox/31.0                                                                        |12    |
++-----------+---------+---------+------+-------------+--------+---------+-----+-------------------------------------+------+--------+-----------------+---------+---------------+------+-------------+-----------------------------------------------------------------------------------------------------------------------------------------+------+
+
+     |-- artist: string (nullable = true)
+ |-- auth: string (nullable = true)
+ |-- firstName: string (nullable = true)
+ |-- gender: string (nullable = true)
+ |-- itemInSession: long (nullable = true)
+ |-- lastName: string (nullable = true)
+ |-- length: double (nullable = true)
+ |-- level: string (nullable = true)
+ |-- location: string (nullable = true)
+ |-- method: string (nullable = true)
+ |-- page: string (nullable = true)
+ |-- registration: double (nullable = true)
+ |-- sessionId: long (nullable = true)
+ |-- song: string (nullable = true)
+ |-- status: long (nullable = true)
+ |-- ts: long (nullable = true)
+ |-- userAgent: string (nullable = true)
+ |-- userId: string (nullable = true)

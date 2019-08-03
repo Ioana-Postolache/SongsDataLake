@@ -4,7 +4,7 @@ import os
 from pyspark.sql import SparkSession
 from pyspark.sql.functions import udf, col
 from pyspark.sql.functions import year, month, dayofmonth, hour, weekofyear, date_format
-from pyspark.sql.types import StructType as R, StructField as Fld, DoubleType as Dbl, StringType as Str, IntegerType as Int, DateType as Date
+from pyspark.sql.types import StructType as R, StructField as Fld, DoubleType as Dbl, StringType as Str, IntegerType as Int, DateType as Date, LongType as Long
 
 
 config = configparser.ConfigParser()
@@ -38,8 +38,7 @@ def process_song_data(spark, input_data, output_data):
     Fld("num_songs",Int()),
     Fld("song_id",Str()),    
     Fld("title",Str()),    
-    Fld("year",Int()),
-    
+    Fld("year",Int())    
 ])
 
     df = spark.read.json(song_data, schema=songsSchema)
@@ -65,6 +64,7 @@ def process_song_data(spark, input_data, output_data):
     songs_table = df.select("song_id", "title", "artist_id", "year", "duration")
     songs_table.printSchema()
     songs_table.show(5)
+    print('songs', songs_table.count())
     
      # write songs table to parquet files partitioned by year and artist
     songs_table = songs_table.write.mode('overwrite').partitionBy("year", "artist_id").parquet(output_data + "songs")
@@ -75,21 +75,49 @@ def process_song_data(spark, input_data, output_data):
     artists_table = spark.sql("select artist_id, artist_name as name, artist_location as location, artist_latitude as latitude, artist_longitude as longitude from df")
     artists_table.printSchema()
     artists_table.show(5)
+    print('artists', artists_table.count())
 
-#     # write artists table to parquet files
-#     artists_table
+    # write artists table to parquet files
+    artists_table = artists_table.write.mode('overwrite').parquet(output_data + "artists")
 
 
-# def process_log_data(spark, input_data, output_data):
-#     # get filepath to log data file
-#     log_data =
-
-#     # read log data file
-#     df = 
+def process_log_data(spark, input_data, output_data):
+    # get filepath to log data file
+    log_data = os.path.join(input_data, "log_data/*.json")
+    print(log_data)
     
-#     # filter by actions for song plays
-#     df = 
+   
+    logsSchema = R([
+    Fld("artist",Str()),
+    Fld("auth",Str()),
+    Fld("firstName",Str()),
+    Fld("gender",Str()),
+    Fld("itemInSession",Int()),
+    Fld("lastName",Str()),
+    Fld("length",Dbl()),
+    Fld("level",Str()),
+    Fld("location",Str()),
+    Fld("method",Str()),
+    Fld("page",Str()),    
+    Fld("registration",Dbl()),    
+    Fld("sessionId",Long()),
+    Fld("song",Str()),
+    Fld("status",Int()),
+    Fld("ts",Long()),
+    Fld("userAgent",Str()),
+    Fld("userId",Str()) 
+])
 
+    # read log data file
+    df = spark.read.json(log_data, schema=logsSchema)
+    #df = spark.read.json(log_data)
+    print(df.count())
+    print(df.show(5, truncate=False))
+    df.printSchema()
+    
+    # filter by actions for song plays
+    df = df.filter("song is not null").show(20)
+    
 #     # extract columns for users table    
 #     artists_table = 
     
@@ -127,7 +155,7 @@ def main():
     output_data = "s3a//songs-data-lake/"
     
     process_song_data(spark, input_data, output_data)    
-#     process_log_data(spark, input_data, output_data)
+    process_log_data(spark, input_data, output_data)
 
 
 if __name__ == "__main__":
