@@ -1,3 +1,6 @@
 dwh.cfg
 .ipynb_checkpoints
 dl.cfg
+log_data
+song_data
+s3a
