@@ -3,8 +3,8 @@ from datetime import datetime
 import os
 from pyspark.sql import SparkSession
 from pyspark.sql.functions import udf, col
-from pyspark.sql.functions import year, month, dayofmonth, hour, weekofyear, date_format
-from pyspark.sql.types import StructType as R, StructField as Fld, DoubleType as Dbl, StringType as Str, IntegerType as Int, DateType as Date, LongType as Long
+from pyspark.sql.functions import year, month, dayofmonth, hour, weekofyear, date_format, from_unixtime
+from pyspark.sql.types import StructType as R, StructField as Fld, DoubleType as Dbl, StringType as Str, IntegerType as Int, DateType as Date, LongType as Long, TimestampType as Ts
 
 
 config = configparser.ConfigParser()
@@ -67,10 +67,9 @@ def process_song_data(spark, input_data, output_data):
     print('songs', songs_table.count())
     
      # write songs table to parquet files partitioned by year and artist
-    songs_table = songs_table.write.mode('overwrite').partitionBy("year", "artist_id").parquet(output_data + "songs")
+    songs_table.write.mode('overwrite').partitionBy("year", "artist_id").parquet(output_data + "songs")
 
     # extract columns to create artists table
-#     artists_table = df.select("artist_id", "name", "location", "lattitude", "longitude")
     df.createOrReplaceTempView("df")
     artists_table = spark.sql("select artist_id, artist_name as name, artist_location as location, artist_latitude as latitude, artist_longitude as longitude from df")
     artists_table.printSchema()
@@ -78,7 +77,7 @@ def process_song_data(spark, input_data, output_data):
     print('artists', artists_table.count())
 
     # write artists table to parquet files
-    artists_table = artists_table.write.mode('overwrite').parquet(output_data + "artists")
+    artists_table.write.mode('overwrite').parquet(output_data + "artists")
 
 
 def process_log_data(spark, input_data, output_data):
@@ -111,30 +110,48 @@ def process_log_data(spark, input_data, output_data):
     # read log data file
     df = spark.read.json(log_data, schema=logsSchema)
     #df = spark.read.json(log_data)
-    print(df.count())
+    print('df.count', df.count())
     print(df.show(5, truncate=False))
     df.printSchema()
     
     # filter by actions for song plays
-    df = df.filter("song is not null").show(20)
+    df = df.filter("song is not null")
     
-#     # extract columns for users table    
-#     artists_table = 
-    
-#     # write users table to parquet files
-#     artists_table
+    # extract columns for users table  
+    df.createOrReplaceTempView("df")
+    users_table = spark.sql("select userId as user_id, firstName as first_name, lastName as last_name, gender, level from df")
+    print('users_table.count', users_table.count())
+    # write users table to parquet files
+    users_table.write.mode('overwrite').parquet(output_data + "users")
 
-#     # create timestamp column from original timestamp column
+    # create timestamp column from original timestamp column
 #     get_timestamp = udf()
 #     df = 
+#    df = df.withColumn('timestamp', f.date_format(df.ts.cast(dataType=Ts()), "yyyy-MM-dd hh:mm:ss,SSS"))
     
 #     # create datetime column from original timestamp column
 #     get_datetime = udf()
 #     df = 
     
-#     # extract columns to create time table
-#     time_table = 
-    
+#     dfWithDatetime = df.withColumn('datetime', f.date_format(df.ts.cast(dataType=Ts()), "yyyy-MM-dd hh:mm:ss"))
+    dfWithDatetime = df.withColumn('datetime', from_unixtime(df.ts/1000))
+    print('after adding datetime')
+    dfWithDatetime.show(5, truncate=False)
+    # extract columns to create time table
+    dfWithDatetime.createOrReplaceTempView("dfWithDatetime")
+    time_table = spark.sql("""
+    select 
+            ts as start_time, 
+            hour(datetime) as hour, 
+            dayofmonth(datetime) as day, 
+            weekofyear(datetime) as week, 
+            month(datetime) as month, 
+            year(datetime) as year, 
+            dayofweek(datetime) as weekday 
+        from dfWithDatetime
+    """)
+    time_table.show(5, truncate=False)
+
 #     # write time table to parquet files partitioned by year and month
 #     time_table
 
