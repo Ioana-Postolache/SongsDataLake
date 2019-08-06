@@ -46,7 +46,8 @@ The log files in the dataset are partitioned by year and month.
 
 
 ## Config file (dl.cfg) structure
-```[AWS]
+```
+\[AWS\]
 AWS_ACCESS_KEY_ID=''
 AWS_SECRET_ACCESS_KEY=''
 ```
