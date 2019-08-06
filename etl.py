@@ -103,7 +103,7 @@ def process_log_data(spark, input_data, output_data):
     df.printSchema()
     
     # filter by actions for song plays
-    df = df.filter("song is not null")
+    df = df.filter("page == 'NextSong'")
     
     # extract columns for users table  
     df.createOrReplaceTempView("df")
@@ -194,8 +194,8 @@ def process_log_data(spark, input_data, output_data):
 
 def main():
     spark = create_spark_session()
-#     input_data = "s3a://udacity-dend/"
-    input_data = ""
+    input_data = "s3a://udacity-dend/"
+#     input_data = ""
     output_data = "s3a//songs-data-lake/"
     
     process_song_data(spark, input_data, output_data)    

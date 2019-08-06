@@ -4,3 +4,4 @@ dl.cfg
 log_data
 song_data
 s3a
+spark-cluster.pem
