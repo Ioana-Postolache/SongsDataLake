@@ -73,7 +73,7 @@ Log into the AWS console for Oregon and navigate to EMR
 Click "Create Cluster"
 Select "Go to advanced options"
 Under "Software Configuration", select Hadoop, Hive, and Spark
-* Optional: Select Hue (to view HDFS) and Livy (for running a notebook)
+Optional: Select Hue (to view HDFS) and Livy (for running a notebook)
 5. Under "Edit software settings", enter the following configuration:
 ```
 [{"classification":"spark", "properties":{"maximizeResourceAllocation":"true"}, "configurations":[]}]
