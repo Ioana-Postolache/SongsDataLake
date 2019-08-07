@@ -60,6 +60,7 @@ The log files in the dataset are partitioned by year and month.
 ```
 
 ## Config file (dl.cfg) structure
+Below is the structure of the config file. Don't use any quotes for the KEY ID and ACCESS KEY:
 ```
 [AWS]
 AWS_ACCESS_KEY_ID=''
