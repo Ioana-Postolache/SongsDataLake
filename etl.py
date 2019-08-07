@@ -130,17 +130,17 @@ def process_log_data(spark, input_data, output_data):
     df.printSchema()
     
     # filter by actions for song plays
-    df = df.filter("page == 'NextSong'")
+    dfSongPlays = df.filter("page == 'NextSong'")
     
     # extract columns for users table  
-    df.createOrReplaceTempView("df")
-    users_table = spark.sql("select userId as user_id, firstName as first_name, lastName as last_name, gender, level from df").distinct()
+    dfSongPlays.createOrReplaceTempView("dfSongPlays")
+    users_table = spark.sql("select userId as user_id, firstName as first_name, lastName as last_name, gender, level from dfSongPlays").distinct()
     print('users_table.count', users_table.count())
     # write users table to parquet files
     users_table.repartitionByRange(3, "user_id").write.mode('overwrite').parquet(output_data + "users")
 
     # create timestamp column from original timestamp column
-    dfWithDatetime = df.withColumn('datetime', from_unixtime(df.ts/1000))
+    dfWithDatetime = dfSongPlays.withColumn('datetime', from_unixtime(dfSongPlays.ts/1000))
     print('after adding datetime')
     dfWithDatetime.show(5, truncate=False)
     # extract columns to create time table
@@ -162,7 +162,7 @@ def process_log_data(spark, input_data, output_data):
     time_table.write.mode('overwrite').partitionBy("year", "month").parquet(output_data + "time")
 
     # read in song data to use for songplays table    
-    song_data = os.path.join(input_data, "song_data/A/*/*/*.json")
+    song_data = os.path.join(input_data, "song_data/*/*/*/*.json")
     # read song data file
     songsSchema = R([
     Fld("artist_id",Str()),
@@ -179,10 +179,10 @@ def process_log_data(spark, input_data, output_data):
     song_df = spark.read.json(song_data, schema=songsSchema).distinct()
 
     # extract columns from joined song and log datasets to create songplays table 
-    songplays_df = df.join(song_df, (df.artist == song_df.artist_name) & (df.song == song_df.title), how='left') \
+    songplays_df = dfSongPlays.join(song_df, (dfSongPlays.artist == song_df.artist_name) & (dfSongPlays.song == song_df.title), how='left') \
                     .withColumn("songplay_id", monotonically_increasing_id()) \
-                    .withColumn("year", year(from_unixtime(df.ts/1000))) \
-                    .withColumn("month", month(from_unixtime(df.ts/1000))) # Could also use 'left_outer'
+                    .withColumn("year", year(from_unixtime(dfSongPlays.ts/1000))) \
+                    .withColumn("month", month(from_unixtime(dfSongPlays.ts/1000))) # Could also use 'left_outer'
     songplays_df.show(5)
     songplays_df.createOrReplaceTempView("songplays_df")
     songplays_table = spark.sql("""
@@ -209,9 +209,10 @@ def process_log_data(spark, input_data, output_data):
 
 def main():
     spark = create_spark_session()
-#     input_data = "s3a://udacity-dend/"
-    input_data = ""
+    input_data = "s3a://udacity-dend/"
+#     input_data = ""
     output_data = "s3a://songs-data-lake/"
+#     output_data = ""
     
     process_song_data(spark, input_data, output_data)    
     process_log_data(spark, input_data, output_data)
