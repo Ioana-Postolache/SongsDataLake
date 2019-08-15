@@ -41,7 +41,7 @@ def process_song_data(spark, input_data, output_data):
             None
     '''
     # get filepath to song data file
-    song_data = os.path.join(input_data, "song_data/A/*/*/*.json")
+    song_data = os.path.join(input_data, "song_data/*/*/*/*.json")
     print(song_data)
 
     # read song data file
