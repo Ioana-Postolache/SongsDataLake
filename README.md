@@ -1,4 +1,4 @@
-# SongplaysDataWarehouseRedshift
+# SongDataLake
 This project builds an ETL pipeline for a data lake hosted on S3. It loads data from S3, processes the data into analytics tables using Spark, and then loads them back into S3. 
 
 The data comes from two datasets that reside in S3. Below are the S3 links for each:
